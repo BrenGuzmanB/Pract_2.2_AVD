@@ -126,3 +126,89 @@ ax.legend()
 
 # Mostrar la gráfica
 plt.show()
+
+#%%% 2D
+
+# Combinación de componentes y títulos
+combinaciones = [(1, 2, 'Componente 1 vs. Componente 2'),
+                (1, 3, 'Componente 1 vs. Componente 3'),
+                (2, 3, 'Componente 2 vs. Componente 3')]
+
+# Itera a través de las combinaciones y plotea las gráficas
+for i, (comp_x, comp_y, titulo) in enumerate(combinaciones):
+    plt.figure(figsize=(6, 5))
+    ax = plt.gca()
+    for j, clase in enumerate(clases_unicas):
+        datos_clase = resultado[resultado['class'] == clase]
+        ax.scatter(datos_clase[f'Componente {comp_x}'], datos_clase[f'Componente {comp_y}'], c=colores[j], label=f'Clase {clase}')
+    ax.set_xlabel(f'Componente {comp_x}')
+    ax.set_ylabel(f'Componente {comp_y}')
+    ax.set_title(titulo)
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+    
+#%% MODELO DE CLASIFICACIÓN (REGRESIÓN LOGÍSTICA)
+
+#%%% Componentes principales
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import confusion_matrix
+
+
+X_train, X_test, y_train, y_test = train_test_split(transformed_data, Y, test_size=0.3, random_state=5)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy_pca = accuracy_score(y_test, y_pred)
+classification_report_pca = classification_report(y_test, y_pred)
+confusion_pca = confusion_matrix(y_test, y_pred)
+
+
+#%%% Datos originales
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import confusion_matrix
+
+
+X_train, X_test, y_train, y_test = train_test_split(X,Y, test_size=0.3, random_state=5)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy_og = accuracy_score(y_test, y_pred)
+classification_report_og = classification_report(y_test, y_pred)
+confusion_og = confusion_matrix(y_test, y_pred)
+
+
+#%%% Evaluación
+
+print('_' * 55)  
+print('Resultados con los componentes principales:')
+print(f'Precisión: {accuracy_pca}')
+print(f'Informe de clasificación:\n{classification_report_pca}')
+
+sns.heatmap(confusion_pca, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicciones')
+plt.ylabel('Etiquetas Reales')
+plt.title('Matriz de Confusión (PCA)')
+plt.show()
+
+
+print('_' * 55)  
+print('Resultados con los datos originales:')
+print(f'Precisión: {accuracy_og}')
+print(f'Informe de clasificación:\n{classification_report_og}')
+
+sns.heatmap(confusion_og, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicciones')
+plt.ylabel('Etiquetas Reales')
+plt.title('Matriz de Confusión (Datos originales)')
+plt.show()
